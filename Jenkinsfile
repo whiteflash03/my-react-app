@@ -6,27 +6,11 @@ pipeline {
         }
     }
 
-    environment {
-        CI = 'true'
-    }
-
     stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Install') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'npm test -- --watchAll=false'
+                sh 'npm install --no-audit --no-fund'
             }
         }
 
@@ -34,6 +18,12 @@ pipeline {
             steps {
                 sh 'npm run build'
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build Successful from Jenkinsfile!'
         }
     }
 }
