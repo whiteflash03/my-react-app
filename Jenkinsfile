@@ -2,26 +2,22 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "whiteflash/my-react-app"
+        DOCKER_IMAGE = "YOUR_DOCKERHUB_USERNAME/my-react-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Install') {
+        stage('Build React App') {
+            agent {
+                docker {
+                    image 'node:18'
+                    args '-u root'
+                }
+            }
             steps {
                 sh 'npm install --no-audit --no-fund'
-            }
-        }
-
-        stage('Test') {
-            steps {
                 sh 'npm test -- --watchAll=false'
-            }
-        }
-
-        stage('Build React') {
-            steps {
                 sh 'npm run build'
             }
         }
