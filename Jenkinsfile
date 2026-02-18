@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                sh 'npm test -- --watchAll=false'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'npm run build'
@@ -23,7 +29,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build Successful from Jenkinsfile!'
+            echo '✅ Build + Tests Passed!'
         }
     }
 }
