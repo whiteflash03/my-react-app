@@ -1,9 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18'
-            args '-u root'
-        }
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "whiteflash/my-react-app"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -20,16 +20,38 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build React') {
             steps {
                 sh 'npm run build'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', 'dockerhub-creds') {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push('latest')
+                    }
+                }
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build + Tests Passed!'
+            echo "🚀 Docker image pushed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed!"
         }
     }
 }
