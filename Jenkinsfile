@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "YOUR_DOCKERHUB_USERNAME/my-react-app"
+        DOCKER_IMAGE = "whiteflash/my-react-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
 
